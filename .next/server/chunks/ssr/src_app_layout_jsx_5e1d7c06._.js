@@ -1,0 +1,3 @@
+module.exports=[49575,a=>{"use strict";var b=a.i(7997);function c({children:a}){return(0,b.jsxs)("html",{lang:"en",children:[(0,b.jsx)("head",{children:(0,b.jsx)("link",{href:"https://fonts.googleapis.com/css2?family=Great+Vibes&family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Plus+Jakarta+Sans:wght@200..800&display=swap",rel:"stylesheet"})}),(0,b.jsx)("body",{className:"font-sans",children:a})]})}a.s(["default",()=>c,"metadata",0,{title:"PaperPop",description:"Create beautiful event Stationary with ease."}])}];
+
+//# sourceMappingURL=src_app_layout_jsx_5e1d7c06._.js.map

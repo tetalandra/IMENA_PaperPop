@@ -1,109 +1,132 @@
 import React from 'react';
 
 const AnnouncementTemplate = ({ data }) => {
-    const { title, subtitle, date, time, location, phone, image, message, variant = 1 } = data;
+    const { title, subtitle, date, image, message, variant = 0, location, time, phone, backgroundType, backgroundImage } = data;
 
-    // Variant 1: Official Board
-    if (variant === 1) {
+    const backgroundStyle = backgroundType === 'image' && backgroundImage ? {
+        backgroundImage: `url(${backgroundImage.src || backgroundImage})`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center'
+    } : {};
+
+    const ImenaBranding = () => (
+        <div className="absolute bottom-4 right-4 z-[60] flex items-center gap-2 opacity-30 select-none pointer-events-none grayscale">
+            <img src="/imena-logo.svg" alt="Imena" className="h-6 w-auto" />
+            <span className="text-[8px] font-bold text-neutral-500 uppercase tracking-[0.2em]">Designed by Imena</span>
+        </div>
+    );
+
+    // Variant 5: Annual Gala Dinner
+    if (variant === 5) {
         return (
-            <div className="relative w-full h-full bg-neutral-950 flex flex-col items-center p-8 border-[12px] border-neutral-900 border-double outline outline-1 outline-amber-500">
-                <div className="w-full bg-amber-600 py-3 text-center mb-10 shadow-lg relative overflow-hidden">
-                    <div className="absolute inset-0 bg-white/10 skew-x-[-20deg] translate-x-[-100%] hover:translate-x-[200%] transition-transform duration-1000"></div>
-                    <p className="text-black font-black tracking-[0.5em] uppercase text-xs">Official Announcement</p>
-                </div>
+            <div className="relative w-full h-full bg-black text-white overflow-hidden font-sans" style={backgroundStyle}>
+                <ImenaBranding />
 
-                <div className="flex-1 flex flex-col items-center justify-center w-full px-4 text-center">
-                    <h1 className="font-serif text-4xl text-white mb-2 tracking-wide font-bold uppercase">
-                        {title || "Urgent"}
+                {/* OPAQUE MASK: Completely clears the inner black box of original text */}
+                <div className="absolute top-[10%] bottom-[10%] left-[12%] right-[12%] bg-black z-0 border border-amber-500/20"></div>
+
+                <div className="relative z-10 flex flex-col items-center justify-center h-full px-16 text-center">
+                    <div className="mb-6 mt-16 bg-black p-3 border border-amber-500/10">
+                        <div className="text-sm font-bold tracking-[0.4em] text-amber-200 uppercase">{subtitle || "COMPANY NAME"}</div>
+                    </div>
+                    <div className="text-[9px] tracking-[0.4em] uppercase mb-10 opacity-70 font-semibold italic">Requests the honor of your presence</div>
+
+                    <h1 className="text-6xl font-cursive text-amber-400 mb-10 leading-tight drop-shadow-2xl" style={{ fontFamily: "'Great Vibes', cursive" }}>
+                        {title || "Annual Gala Dinner"}
                     </h1>
-                    <h2 className="font-serif italic text-5xl text-amber-400 mb-8">
-                        {subtitle || "Notice"}
-                    </h2>
 
-                    {image && (
-                        <div className="w-full h-40 mb-8 rounded-lg overflow-hidden border-2 border-amber-900/50 grayscale hover:grayscale-0 transition-all duration-700">
-                            <img src={image} alt="Announcement" className="w-full h-full object-cover" />
-                        </div>
-                    )}
-
-                    <div className="w-16 h-1 bg-amber-600 mb-8 rounded-full"></div>
-
-                    <p className="font-serif text-base text-neutral-400 leading-relaxed max-w-sm mb-8">
-                        {message || "Important updates following our recent deliberations. Please review for compliance."}
-                    </p>
-
-                    <div className="w-full border-t border-b border-neutral-800 py-6 mb-8 bg-neutral-900/40">
-                        <div className="space-y-2">
-                            <p className="text-amber-200 font-serif text-sm"><span className="text-amber-600 font-bold mr-2 uppercase text-[10px]">When:</span> {date} {time && `at ${time}`}</p>
-                            <p className="text-amber-200 font-serif text-sm"><span className="text-amber-600 font-bold mr-2 uppercase text-[10px]">Where:</span> {location}</p>
-                        </div>
+                    <div className="flex items-center gap-10 border-y border-white/10 py-6 mb-12 w-full justify-center bg-black/40">
+                        <div className="text-[10px] font-bold uppercase tracking-[0.3em] opacity-60">SATURDAY</div>
+                        <div className="text-5xl font-serif text-amber-400" style={{ fontFamily: "'Playfair Display', serif" }}>{date?.split(' ')[1] || "17"}</div>
+                        <div className="text-[10px] font-bold uppercase tracking-[0.3em] opacity-60">{time || "6:00 PM"}</div>
                     </div>
-                </div>
 
-                <div className="w-full flex justify-between items-end border-t border-amber-900/30 pt-4">
-                    <div className="text-left">
-                        <p className="text-[9px] text-neutral-600 uppercase tracking-widest font-bold">Authorized By Board</p>
-                    </div>
-                    <div className="text-right">
-                        <p className="text-amber-500 font-mono text-[10px]">{phone}</p>
+                    <div className="space-y-5">
+                        <div className="text-xs font-black tracking-[0.3em] uppercase text-amber-200">{location || "THE GRAND BALLROOM"}</div>
+                        <p className="text-[9px] opacity-70 tracking-widest max-w-[300px] leading-relaxed italic">{message}</p>
+                        <div className="text-[10px] text-amber-400 font-bold tracking-[0.2em] pt-4">{phone || "R.S.V.P"}</div>
                     </div>
                 </div>
             </div>
         );
     }
 
-    // Variant 2: Bold News (Newsletter style)
-    if (variant === 2) {
+    // Variant 6: Luxury Event
+    if (variant === 6) {
         return (
-            <div className="relative w-full h-full bg-white flex flex-col p-8 overflow-hidden font-sans">
-                {/* News Header */}
-                <div className="border-b-4 border-black pb-4 mb-8 flex justify-between items-end">
-                    <h2 className="text-4xl font-black uppercase tracking-tighter leading-none">THE BULLETIN</h2>
-                    <p className="text-[10px] font-bold text-neutral-500 text-right">{date || "VOL. 24"}</p>
-                </div>
+            <div className="relative w-full h-full bg-black text-white overflow-hidden font-sans" style={backgroundStyle}>
+                <ImenaBranding />
 
-                <div className="flex-1 flex flex-col">
-                    <h1 className="text-6xl font-black uppercase tracking-tighter leading-[0.9] mb-6">
-                        {title || "Special"} <br />
-                        <span className="text-neutral-500">{subtitle || "Edition"}</span>
+                {/* OPAQUE MASK: Clears the central invitation text block */}
+                <div className="absolute top-[35%] bottom-[10%] left-[25%] right-[25%] bg-black z-0"></div>
+
+                <div className="relative z-10 flex flex-col items-center justify-center h-full px-14 text-center">
+                    <div className="mt-20 mb-8 w-32 h-[1px] bg-white/20"></div>
+                    <h2 className="text-white uppercase tracking-[0.6em] text-base font-black mb-6 drop-shadow-lg">
+                        {title?.toUpperCase() || "LUXURY EVENT"}
+                    </h2>
+                    <h1 className="text-6xl font-cursive mb-12 text-white drop-shadow-xl" style={{ fontFamily: "'Great Vibes', cursive" }}>
+                        Invitation
                     </h1>
 
-                    {image && (
-                        <div className="w-full h-48 bg-neutral-100 mb-6 relative group overflow-hidden">
-                            <img src={image} alt="Featured" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
-                            <div className="absolute bottom-2 left-2 bg-black text-white px-2 py-1 text-[8px] font-bold tracking-widest uppercase">LATEST STORY</div>
-                        </div>
-                    )}
+                    <div className="w-full max-w-xs border-t border-white/10 pt-10">
+                        <p className="text-white/60 font-medium text-[11px] leading-relaxed uppercase tracking-[0.2em] italic">
+                            {message || "We request the pleasure of your company."}
+                        </p>
+                    </div>
 
-                    <div className="grid grid-cols-2 gap-8 flex-1">
-                        <div className="border-r border-neutral-200 pr-4">
-                            <p className="text-xs font-bold uppercase mb-3 tracking-widest text-neutral-400">Headlines</p>
-                            <p className="text-sm font-medium leading-relaxed text-neutral-800">
-                                {message || "Groundbreaking developments that change everything we thought we knew about our community."}
-                            </p>
-                        </div>
-                        <div className="flex flex-col justify-between">
-                            <div className="space-y-4">
-                                <div>
-                                    <p className="text-[10px] font-black uppercase tracking-widest text-neutral-400 mb-1 italic">Location</p>
-                                    <p className="text-xs font-bold">{location || "Central Plaza"}</p>
-                                </div>
-                                {time && (
-                                    <div>
-                                        <p className="text-[10px] font-black uppercase tracking-widest text-neutral-400 mb-1 italic">Time</p>
-                                        <p className="text-xs font-bold">{time}</p>
-                                    </div>
-                                )}
-                            </div>
-                            <div className="mt-4 pt-4 border-t border-dotted border-neutral-300">
-                                <p className="text-[10px] font-bold">{phone}</p>
-                            </div>
+                    <div className="mt-16 py-2 px-6 border border-white/10 bg-black shadow-2xl">
+                        <div className="text-[10px] tracking-[0.6em] font-bold text-white/70 uppercase">
+                            {date || "RSVP REQUIRED"}
                         </div>
                     </div>
                 </div>
+            </div>
+        );
+    }
 
-                <div className="mt-8 flex justify-center">
-                    <div className="w-full bg-black h-[1px]"></div>
+    // Variant 7: Grand Opening
+    if (variant === 7) {
+        return (
+            <div className="relative w-full h-full bg-black text-white overflow-hidden font-sans" style={backgroundStyle}>
+                <ImenaBranding />
+
+                {/* OPAQUE MASK: Clears the center text while keeping the golden ribbons */}
+                <div className="absolute top-[20%] bottom-[20%] left-[20%] right-[20%] bg-black z-0"></div>
+
+                <div className="relative z-10 flex flex-col items-center justify-center h-full px-14 text-center">
+                    <div className="mb-10 bg-black p-5 border border-amber-500/20 rounded-full shadow-2xl">
+                        <div className="text-amber-400 font-cursive text-3xl" style={{ fontFamily: "'Great Vibes', cursive" }}>
+                            {subtitle || "Ray's Bistro"}
+                        </div>
+                    </div>
+
+                    <div className="relative">
+                        <h1 className="text-9xl font-black text-amber-500 italic leading-none mb-1 transform scale-y-125" style={{ fontFamily: "'Playfair Display', serif" }}>
+                            {title?.split(' ')[0] || "Grand"}
+                        </h1>
+                        <h2 className="text-4xl font-black tracking-[0.5em] text-white uppercase mb-12">Opening</h2>
+                    </div>
+
+                    <div className="flex gap-14 mb-14 bg-black p-6 border border-white/5 shadow-2xl">
+                        <div className="text-center">
+                            <span className="block text-[9px] font-black uppercase tracking-widest text-amber-500 mb-2">DATE:</span>
+                            <span className="text-3xl font-black tracking-tighter">{date || "31st"}</span>
+                        </div>
+                        <div className="w-[1px] h-12 bg-white/20"></div>
+                        <div className="text-center">
+                            <span className="block text-[9px] font-black uppercase tracking-widest text-amber-500 mb-2">TIME:</span>
+                            <span className="text-3xl font-black tracking-tighter">{time || "4pm"}</span>
+                        </div>
+                    </div>
+
+                    <p className="max-w-[250px] text-[10px] font-bold tracking-[0.2em] italic text-gray-500 mb-6 leading-relaxed">
+                        {location}
+                    </p>
+
+                    <div className="text-amber-400 text-xs font-black tracking-[0.3em] border-t border-amber-500/10 pt-4 w-full max-w-[200px]">
+                        {phone || "R.S.V.P"}
+                    </div>
                 </div>
             </div>
         );

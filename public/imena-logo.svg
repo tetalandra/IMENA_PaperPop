@@ -1,0 +1,28 @@
+<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+    <!-- Outer Glow Circle -->
+    <circle cx="100" cy="90" r="85" fill="none" stroke="#2563eb" stroke-width="0.5" stroke-dasharray="2 4" opacity="0.5" />
+    
+    <!-- Hands -->
+    <path d="M40 130 C40 130 50 160 100 160 C150 160 160 130 160 130 C160 130 155 110 140 105 C140 105 130 145 100 145 C70 145 60 105 60 105 C60 105 45 110 40 130 Z" fill="#2563eb" />
+    
+    <!-- Central Document/Book -->
+    <rect x="80" y="60" width="40" height="50" rx="2" fill="#f59e0b" />
+    <line x1="85" y1="70" x2="115" y2="70" stroke="#fff" stroke-width="2" />
+    <line x1="85" y1="80" x2="115" y2="80" stroke="#fff" stroke-width="2" />
+    <line x1="85" y1="90" x2="105" y2="90" stroke="#fff" stroke-width="2" />
+    
+    <!-- Top Symbol (Cross/Key/Crown hint) -->
+    <path d="M100 30 L115 50 L100 70 L85 50 Z" fill="#f59e0b" />
+    <circle cx="100" cy="45" r="10" fill="none" stroke="#f59e0b" stroke-width="3" />
+    <path d="M90 45 L110 45 M100 35 L100 55" stroke="#f59e0b" stroke-width="2" />
+    
+    <!-- Decorative Speech Bubbles/Circles -->
+    <circle cx="70" cy="65" r="8" fill="#2563eb" />
+    <circle cx="130" cy="65" r="8" fill="#2563eb" />
+    
+    <!-- Banner at bottom -->
+    <path d="M30 150 L50 140 L150 140 L170 150 L150 170 L50 170 Z" fill="#2563eb" />
+    
+    <!-- Imena Text -->
+    <text x="100" y="162" font-family="Arial, sans-serif" font-weight="900" font-size="20" fill="white" text-anchor="middle" letter-spacing="2">IMENA</text>
+</svg>

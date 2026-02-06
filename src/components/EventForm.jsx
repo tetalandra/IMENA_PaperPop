@@ -1,9 +1,20 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { ArrowLeft, Download, Calendar, MapPin, Clock, Type, AlignLeft, Phone, FileText, Sparkles, User, UserCheck } from 'lucide-react';
+import {
+    ArrowLeft, Download, Calendar, MapPin, Clock, Type, AlignLeft,
+    Phone, FileText, Sparkles, User, UserCheck, Save, Loader2,
+    ChevronRight, Camera, Palette, Layout, Wand2
+} from 'lucide-react';
 import InvitationPreview from './InvitationPreview';
 import { downloadPDF } from '../utils/pdfUtils';
+import { createInvitation, uploadImage } from '../utils/api';
 
-// Animated Input Group with Floating Label & Spotlight Support
+import birthdayV5 from '../assets/templates/birthday_variant_5.jpg';
+import birthdayV6 from '../assets/templates/birthday_variant_6.jpg';
+import birthdayV7 from '../assets/templates/birthday_variant_7.jpg';
+import noticeV5 from '../assets/templates/notice_variant_5.jpg';
+import noticeV6 from '../assets/templates/notice_variant_6.jpg';
+import noticeV7 from '../assets/templates/notice_variant_7.jpg';
+
 const InputGroup = ({
     label, name, value, onChange, type = "text", icon: Icon, placeholder, multiline = false,
     delay, isFocused, onFocus, onBlur, className
@@ -16,35 +27,33 @@ const InputGroup = ({
 
     return (
         <div
-            className={`relative transition-all duration-300 ease-out ${className}
-        ${isFocused ? 'z-50' : 'z-0 opacity-100'} 
-      `}
+            className={`relative transition-all duration-500 ease-out ${className}`}
             style={{ animationDelay: `${delay}ms` }}
         >
             <div
-                className={`relative group bg-neutral-900/60 backdrop-blur-md border rounded-xl overflow-hidden transition-all duration-300
-            ${isFocused
-                        ? 'border-gold-500 shadow-[0_10px_30px_rgba(0,0,0,0.5)] bg-neutral-900/90 -translate-y-1'
-                        : 'border-neutral-800 hover:border-neutral-700'
+                className={`relative group bg-neutral-900/40 backdrop-blur-xl border rounded-2xl overflow-hidden transition-all duration-500
+                ${isFocused
+                        ? 'border-amber-500/50 shadow-[0_20px_40px_rgba(0,0,0,0.6)] bg-neutral-900/80 -translate-y-1'
+                        : 'border-white/5 hover:border-white/10'
                     }
-        `}
+            `}
             >
                 {/* Floating Label */}
                 <label
-                    className={`absolute left-10 transition-all duration-300 pointer-events-none z-10
-                ${(isFocused || hasValue)
-                            ? 'top-2 text-[9px] text-gold-500 font-bold tracking-[0.2em] uppercase'
-                            : 'top-4 text-sm text-neutral-500 font-medium tracking-wide'
+                    className={`absolute left-12 transition-all duration-500 pointer-events-none z-10 font-bold tracking-widest
+                    ${(isFocused || hasValue)
+                            ? 'top-3 text-[8px] text-amber-500 uppercase'
+                            : 'top-1/2 -translate-y-1/2 text-xs text-neutral-500 uppercase'
                         }
-            `}
+                `}
                 >
                     {label}
                 </label>
 
                 {/* Icon */}
-                <div className={`absolute top-0 left-0 h-full w-10 flex items-center justify-center transition-colors duration-300
-            ${isFocused ? 'text-gold-400' : 'text-neutral-600'}
-        `}>
+                <div className={`absolute top-0 left-0 h-full w-12 flex items-center justify-center transition-all duration-500
+                    ${isFocused ? 'text-amber-400 scale-110' : 'text-neutral-600'}
+                `}>
                     {Icon && <Icon className="w-4 h-4" />}
                 </div>
 
@@ -55,8 +64,8 @@ const InputGroup = ({
                         onChange={onChange}
                         onFocus={onFocus}
                         onBlur={onBlur}
-                        rows="4"
-                        className="w-full bg-transparent border-none text-gold-100 placeholder-transparent focus:ring-0 pt-7 pb-3 pl-10 pr-4 text-sm resize-none custom-scrollbar"
+                        rows="3"
+                        className="w-full bg-transparent border-none text-white placeholder-transparent focus:ring-0 pt-8 pb-4 pl-12 pr-6 text-sm resize-none custom-scrollbar font-medium"
                         placeholder={placeholder}
                     />
                 ) : (
@@ -67,13 +76,13 @@ const InputGroup = ({
                         onChange={onChange}
                         onFocus={onFocus}
                         onBlur={onBlur}
-                        className="w-full bg-transparent border-none text-gold-100 placeholder-transparent focus:ring-0 pt-7 pb-3 pl-10 pr-4 text-sm h-[60px]"
+                        className="w-full bg-transparent border-none text-white placeholder-transparent focus:ring-0 pt-8 pb-4 pl-12 pr-6 text-sm h-[68px] font-medium"
                         placeholder={placeholder}
                     />
                 )}
 
-                {/* Focus Glow Gradient */}
-                <div className={`absolute inset-0 bg-gradient-to-r from-gold-500/5 via-transparent to-gold-500/5 opacity-0 transition-opacity duration-500 pointer-events-none ${isFocused ? 'opacity-100' : ''}`} />
+                {/* Focus Accent */}
+                <div className={`absolute bottom-0 left-0 h-[2px] bg-gradient-to-r from-transparent via-amber-500 to-transparent transition-all duration-700 ${isFocused ? 'w-full opacity-100' : 'w-0 opacity-0'}`} />
             </div>
         </div>
     );
@@ -85,17 +94,21 @@ const EventForm = ({ onBack }) => {
     const [focusedField, setFocusedField] = useState(null);
 
     const [formData, setFormData] = useState({
-        title: 'Happy Birthday',
-        subtitle: 'Sarah!',
-        date: 'March 16, 2024',
-        time: 'At 5:00 PM',
-        location: '123 Anywhere St., Any City',
-        phone: '+123-456-7890',
-        message: 'Wishing you a day filled with love and laughter!',
-        variant: 1
+        title: '',
+        subtitle: '',
+        date: '',
+        time: '',
+        location: '',
+        phone: '',
+        message: '',
+        variant: 1,
+        backgroundType: 'color',
+        backgroundImage: null
     });
 
     const [templateImages, setTemplateImages] = useState({});
+    const [imageFiles, setImageFiles] = useState({});
+    const [isSaving, setIsSaving] = useState(false);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -109,8 +122,45 @@ const EventForm = ({ onBack }) => {
             reader.onloadend = () => {
                 const imageKey = `${templateType}-${formData.variant}`;
                 setTemplateImages(prev => ({ ...prev, [imageKey]: reader.result }));
+                setImageFiles(prev => ({ ...prev, [imageKey]: file }));
             };
             reader.readAsDataURL(file);
+        }
+    };
+
+    const selectPredefinedTemplate = (bg) => {
+        setFormData(prev => ({
+            ...prev,
+            backgroundType: 'image',
+            backgroundImage: bg.img,
+            variant: bg.variant
+        }));
+    };
+
+    const handleSave = async () => {
+        setIsSaving(true);
+        try {
+            let imageUrl = formData.backgroundImage;
+            const imageKey = `${templateType}-${formData.variant}`;
+            const file = imageFiles[imageKey];
+
+            if (file) {
+                const uploadRes = await uploadImage(file);
+                imageUrl = uploadRes.url;
+            }
+
+            await createInvitation({
+                ...formData,
+                templateType,
+                imageUrl: imageUrl
+            });
+
+            alert('Invitation saved successfully!');
+        } catch (error) {
+            console.error(error);
+            alert('Failed to save invitation');
+        } finally {
+            setIsSaving(false);
         }
     };
 
@@ -118,254 +168,243 @@ const EventForm = ({ onBack }) => {
     const handleBlur = () => setFocusedField(null);
 
     const handleDownload = () => {
-        downloadPDF('invitation-card', `PaperPop-${formData.title}.pdf`);
+        downloadPDF('invitation-card', `PaperPop-${formData.title || 'Invitation'}.pdf`);
     };
 
     const templates = [
-        { id: 'birthday', label: 'Birthday', icon: '🎂' },
-        { id: 'assembly', label: 'Assembly', icon: '🏛️' },
-        { id: 'announcement', label: 'Notices', icon: '📢' },
-        { id: 'achievement', label: 'Award', icon: '🎓' },
+        { id: 'birthday', label: 'Birthday', icon: <Camera className="w-4 h-4" />, color: 'from-amber-500/20' },
+        { id: 'announcement', label: 'Notices', icon: <FileText className="w-4 h-4" />, color: 'from-blue-500/20' },
+        { id: 'achievement', label: 'Award', icon: <Layout className="w-4 h-4" />, color: 'from-purple-500/20' },
+        { id: 'assembly', label: 'Assembly', icon: <UserCheck className="w-4 h-4" />, color: 'from-emerald-500/20' },
     ];
 
-    // Dynamic field configuration based on template
+    const predefinedBackgrounds = [
+        { id: 'b5', label: 'Golden Glitter', img: birthdayV5.src || birthdayV5, variant: 5, category: 'birthday' },
+        { id: 'b6', label: 'Modern Photo', img: birthdayV6.src || birthdayV6, variant: 6, category: 'birthday' },
+        { id: 'b7', label: 'Balloon Party', img: birthdayV7.src || birthdayV7, variant: 7, category: 'birthday' },
+        { id: 'n5', label: 'Annual Gala', img: noticeV5.src || noticeV5, variant: 5, category: 'announcement' },
+        { id: 'n6', label: 'Luxury Event', img: noticeV6.src || noticeV6, variant: 6, category: 'announcement' },
+        { id: 'n7', label: 'Grand Opening', img: noticeV7.src || noticeV7, variant: 7, category: 'announcement' },
+    ];
+
     const getFieldConfig = () => {
-        // Defaults
         let config = {
             showTime: true,
             showLocation: true,
-            locationLabel: 'Venue Location',
+            locationLabel: 'Location',
             locationIcon: MapPin,
-            titleLabel: 'Event Title',
+            titleLabel: 'Headline',
             showPhone: true,
-            phoneLabel: 'Contact / RSVP',
+            phoneLabel: 'R.S.V.P',
             showImage: false,
-            variants: [
-                { id: 1, name: 'Classic', preview: '✨' },
-                { id: 2, name: 'Modern', preview: '💫' }
-            ]
         };
 
         switch (templateType) {
             case 'birthday':
-                config.showTime = false;
-                config.showLocation = false;
-                config.showPhone = true;
                 config.showImage = true;
-                config.titleLabel = 'Greeting';
-                config.variants = [
-                    { id: 1, name: 'Royal Gold', preview: '👑' },
-                    { id: 2, name: 'Floral Dream', preview: '🌸' },
-                    { id: 3, name: 'Minimal Dark', preview: '🖤' },
-                    { id: 4, name: 'Festive Balloons', preview: '🎈' },
-                    { id: 5, name: 'Golden Invite', preview: '✉️' }
-                ];
+                config.titleLabel = 'Top Heading';
+                config.locationLabel = 'Venue';
+                break;
+            case 'announcement':
+                config.showImage = false;
+                config.titleLabel = 'Event Title';
                 break;
             case 'achievement':
                 config.showTime = false;
-                config.locationLabel = 'Sender / From';
-                config.locationIcon = User;
-                config.titleLabel = 'Award / Title';
-                config.phoneLabel = 'Date / Year';
                 config.showPhone = false;
-                config.showImage = true;
-                config.variants = [
-                    { id: 1, name: 'Classic Award', preview: '🏆' },
-                    { id: 2, name: 'Modern Badge', preview: '🏅' }
-                ];
-                break;
-            case 'announcement':
-                config.titleLabel = 'Headline';
-                config.showImage = true;
-                config.variants = [
-                    { id: 1, name: 'Official', preview: '📋' },
-                    { id: 2, name: 'Bold News', preview: '🗞️' }
-                ];
+                config.titleLabel = 'Award Title';
+                config.locationLabel = 'Issuer';
                 break;
             case 'assembly':
                 config.showImage = true;
                 config.variants = [
-                    { id: 1, name: 'Scholarly', preview: '📚' },
-                    { id: 2, name: 'Modern Meet', preview: '🤝' }
+                    { id: 1, name: 'Luxury Stage', preview: '🎭' },
+                    { id: 3, name: 'Tuesday Session', preview: '🗓️' },
+                    { id: 4, name: 'Saturday Session', preview: '📅' }
                 ];
                 break;
-            default:
-                break;
         }
-
         return config;
     };
 
-    const { showTime, showLocation, locationLabel, locationIcon, titleLabel, showPhone, phoneLabel, showImage, variants } = getFieldConfig();
+    const { showTime, showLocation, locationLabel, locationIcon, titleLabel, showPhone, phoneLabel, showImage } = getFieldConfig();
 
     return (
-        <div className="min-h-screen bg-black text-white flex flex-col lg:flex-row overflow-hidden font-sans selection:bg-gold-500/30 selection:text-gold-200">
+        <div className="min-h-screen bg-[#050505] text-white flex flex-col lg:flex-row overflow-hidden font-sans">
 
-            {/* LEFT PANEL: Controls */}
-            <div className="w-full lg:w-[480px] h-screen overflow-y-auto bg-neutral-950 border-r border-gold-900/20 relative z-20 custom-scrollbar flex flex-col shadow-[10px_0_30px_rgba(0,0,0,0.5)]">
+            {/* LEFT SIDEBAR: CREATIVE CONTROLS */}
+            <div className="w-full lg:w-[460px] h-screen overflow-y-auto bg-black border-r border-white/5 relative z-20 custom-scrollbar flex flex-col shadow-2xl">
 
-                {/* Dim overlay when focusing */}
-                <div
-                    className={`absolute inset-0 bg-black/60 backdrop-blur-[1px] transition-opacity duration-500 pointer-events-none z-40
-                ${focusedField ? 'opacity-100' : 'opacity-0'}
-            `}
-                />
-
-                <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-[0.03] pointer-events-none z-0" />
+                {/* Visual Flair: Top Gradient */}
+                <div className={`absolute top-0 left-0 w-full h-64 bg-gradient-to-b ${templates.find(t => t.id === templateType)?.color || 'from-amber-500/10'} to-transparent opacity-30 pointer-events-none z-0 transition-all duration-1000`}></div>
 
                 <div className="p-8 lg:p-10 pb-32 relative z-10">
-                    <button
-                        onClick={onBack}
-                        className="group flex items-center text-xs font-bold text-neutral-500 hover:text-gold-400 transition-colors mb-8 tracking-[0.2em] uppercase"
-                    >
-                        <ArrowLeft className="w-3 h-3 mr-2 group-hover:-translate-x-1 transition-transform" />
-                        Back to Home
-                    </button>
+                    {/* Header Navigation */}
+                    <div className="flex justify-between items-center mb-10">
+                        <button onClick={onBack} className="group flex items-center gap-3 text-[10px] font-black text-neutral-500 hover:text-white transition-all tracking-[0.3em] uppercase">
+                            <ArrowLeft className="w-3 h-3 group-hover:-translate-x-1 transition-transform" />
+                            Studio
+                        </button>
+                        <div className="flex items-center gap-2">
+                            <div className="w-2 h-2 rounded-full bg-amber-500 animate-pulse"></div>
+                            <span className="text-[10px] font-black text-amber-500 tracking-[0.2em] uppercase">Live Draft</span>
+                        </div>
+                    </div>
 
-                    <header className="mb-8 animate-fade-in-up">
-                        <h2 className="text-3xl font-serif text-white mb-2 drop-shadow-md">
-                            Design <span className="italic text-gold-400">Stationery</span>
-                        </h2>
-                        <div className="w-8 h-1 bg-gold-600 rounded-full mb-4"></div>
+                    <header className="mb-12">
+                        <h1 className="text-4xl font-serif text-white mb-2 leading-tight">
+                            Create <br />
+                            <span className="italic text-amber-500">Masterpiece</span>
+                        </h1>
+                        <p className="text-[10px] text-neutral-500 font-bold uppercase tracking-[0.2em]">Tailor every detail to perfection</p>
                     </header>
 
-                    {/* Template Selector */}
-                    <div className="mb-8 animate-fade-in-up animation-delay-200">
-                        <label className="text-[10px] text-neutral-500 font-bold tracking-[0.2em] uppercase mb-3 block">Category</label>
-                        <div className="grid grid-cols-4 gap-2 bg-neutral-900/50 p-1 rounded-2xl border border-neutral-800">
+                    {/* Category Selection: Luxury Grid */}
+                    <div className="mb-12">
+                        <div className="flex items-center justify-between mb-4">
+                            <label className="text-[10px] text-neutral-500 font-black tracking-[0.3em] uppercase">Category</label>
+                            <Palette className="w-3 h-3 text-amber-500/50" />
+                        </div>
+                        <div className="grid grid-cols-2 gap-3">
                             {templates.map((t) => (
                                 <button
                                     key={t.id}
                                     onClick={() => {
                                         setTemplateType(t.id);
-                                        setFormData(prev => ({ ...prev, variant: 1 }));
+                                        setFormData(prev => ({ ...prev, variant: 1, backgroundImage: null, backgroundType: 'color' }));
                                     }}
-                                    className={`relative flex flex-col items-center justify-center py-3 rounded-xl transition-all duration-300 group
-                                ${templateType === t.id
-                                            ? 'bg-neutral-800 shadow-lg ring-1 ring-gold-500/50'
-                                            : 'hover:bg-neutral-800/50'
+                                    className={`relative flex items-center gap-4 px-5 py-4 rounded-2xl transition-all duration-500 group overflow-hidden border
+                                    ${templateType === t.id
+                                            ? 'bg-white/5 border-amber-500/50 text-white shadow-xl translate-y-[-2px]'
+                                            : 'bg-neutral-900/40 border-white/5 text-neutral-500 hover:border-white/10'
                                         }`}
                                 >
-                                    <span className={`text-xl mb-1 transform transition-transform duration-300 ${templateType === t.id ? 'scale-110' : 'scale-100 grayscale group-hover:grayscale-0'}`}>
+                                    <div className={`transition-all duration-500 ${templateType === t.id ? 'text-amber-500 scale-125' : 'text-neutral-600'}`}>
                                         {t.icon}
-                                    </span>
-                                    <span className={`text-[9px] font-bold tracking-wider uppercase ${templateType === t.id ? 'text-gold-400' : 'text-neutral-500'}`}>
+                                    </div>
+                                    <span className={`text-xs font-bold tracking-widest uppercase transition-colors duration-500 ${templateType === t.id ? 'text-white' : ''}`}>
                                         {t.label}
                                     </span>
+                                    {templateType === t.id && (
+                                        <div className="absolute top-0 right-0 p-2">
+                                            <div className="w-1.5 h-1.5 rounded-full bg-amber-500 ring-4 ring-amber-500/20"></div>
+                                        </div>
+                                    )}
                                 </button>
                             ))}
                         </div>
                     </div>
 
-                    {/* Variant Selector */}
-                    <div className="mb-8 animate-fade-in-up animation-delay-300">
-                        <label className="text-[10px] text-neutral-500 font-bold tracking-[0.2em] uppercase mb-3 block">Style Variant</label>
-                        <div className="flex gap-2 overflow-x-auto pb-2 custom-scrollbar">
-                            {variants.map((v) => (
+                    {/* Collection Gallery: Horizontal Luxury Scroll */}
+                    <div className="mb-12">
+                        <div className="flex items-center justify-between mb-4">
+                            <label className="text-[10px] text-neutral-500 font-black tracking-[0.3em] uppercase">Premium Collection</label>
+                            <span className="text-[9px] text-amber-500 font-bold uppercase tracking-widest bg-amber-500/10 px-2 py-0.5 rounded-full border border-amber-500/20">6 Styles Available</span>
+                        </div>
+                        <div className="flex gap-4 overflow-x-auto pb-6 custom-scrollbar snap-x">
+                            {predefinedBackgrounds.filter(bg => bg.category === templateType).map((bg) => (
                                 <button
-                                    key={v.id}
-                                    onClick={() => setFormData(prev => ({ ...prev, variant: v.id }))}
-                                    className={`flex-shrink-0 flex items-center gap-3 px-4 py-3 rounded-xl border transition-all duration-300
-                                ${formData.variant === v.id
-                                            ? 'bg-gold-500/10 border-gold-500 text-gold-400'
-                                            : 'bg-neutral-900/40 border-neutral-800 text-neutral-500 hover:border-neutral-700'
+                                    key={bg.id}
+                                    onClick={() => selectPredefinedTemplate(bg)}
+                                    className={`relative flex-shrink-0 w-32 aspect-[3/4] rounded-2xl overflow-hidden border-2 transition-all duration-500 group snap-start
+                                        ${formData.backgroundImage === bg.img
+                                            ? 'border-amber-500 shadow-[0_15px_30px_rgba(234,179,8,0.3)] scale-105'
+                                            : 'border-white/5 hover:border-white/20 scale-100'
                                         }`}
                                 >
-                                    <span className="text-lg">{v.preview}</span>
-                                    <span className="text-[10px] font-bold tracking-widest uppercase truncate max-w-[80px]">
-                                        {v.name}
-                                    </span>
+                                    <img src={bg.img} alt={bg.label} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
+                                    <div className={`absolute inset-0 bg-black/60 transition-opacity duration-500 ${formData.backgroundImage === bg.img ? 'opacity-0' : 'opacity-40 group-hover:opacity-0'}`}></div>
+                                    <div className="absolute inset-x-0 bottom-0 p-3 bg-gradient-to-t from-black to-transparent">
+                                        <span className="text-[9px] text-white font-black uppercase tracking-widest leading-none block">{bg.label}</span>
+                                    </div>
+                                    {formData.backgroundImage === bg.img && (
+                                        <div className="absolute top-2 right-2 w-5 h-5 bg-amber-500 rounded-full flex items-center justify-center shadow-2xl animate-bounce">
+                                            <Sparkles className="w-2.5 h-2.5 text-black" />
+                                        </div>
+                                    )}
                                 </button>
                             ))}
                         </div>
                     </div>
 
-                    {/* Smart Form Inputs */}
-                    <div className="space-y-8">
-                        {/* Section: Core Content */}
+                    {/* Editor Section */}
+                    <div className="space-y-10">
                         <section className="space-y-4">
-                            <h3 className="text-[10px] font-bold text-neutral-600 tracking-[0.3em] uppercase border-b border-neutral-900 pb-2 mb-4">Core Content</h3>
+                            <div className="flex items-center gap-3 mb-6">
+                                <div className="h-[1px] flex-1 bg-white/5"></div>
+                                <h3 className="text-[9px] font-black text-neutral-600 tracking-[0.4em] uppercase">Content Studio</h3>
+                                <div className="h-[1px] flex-1 bg-white/5"></div>
+                            </div>
+
                             <div className="grid grid-cols-2 gap-4">
                                 <InputGroup
-                                    delay={300} icon={Type} label={titleLabel} name="title"
-                                    value={formData.title} onChange={handleChange} placeholder="e.g. Birthday"
+                                    label={titleLabel} name="title" value={formData.title} onChange={handleChange}
+                                    icon={Wand2} placeholder="Headline" delay={100}
                                     isFocused={focusedField === 'title'} onFocus={() => handleFocus('title')} onBlur={handleBlur}
                                 />
                                 <InputGroup
-                                    delay={350} icon={AlignLeft} label="Subtitle" name="subtitle"
-                                    value={formData.subtitle} onChange={handleChange} placeholder="e.g. Sarah!"
+                                    label="Name / Subject" name="subtitle" value={formData.subtitle} onChange={handleChange}
+                                    icon={User} placeholder="Who is it for?" delay={200}
                                     isFocused={focusedField === 'subtitle'} onFocus={() => handleFocus('subtitle')} onBlur={handleBlur}
                                 />
                             </div>
 
                             <InputGroup
-                                delay={400} icon={FileText} label="Message & Details" name="message"
-                                value={formData.message} onChange={handleChange} placeholder="Custom message..." multiline
+                                label="Invitation Message" name="message" value={formData.message} onChange={handleChange}
+                                icon={AlignLeft} placeholder="Something memorable..." multiline delay={300}
                                 isFocused={focusedField === 'message'} onFocus={() => handleFocus('message')} onBlur={handleBlur}
                             />
                         </section>
 
-                        {/* Section: Visuals */}
                         {showImage && (
-                            <section className="space-y-4 animate-fade-in-up" style={{ animationDelay: '450ms' }}>
-                                <div className="flex justify-between items-center border-b border-neutral-900 pb-2 mb-4">
-                                    <h3 className="text-[10px] font-bold text-neutral-600 tracking-[0.3em] uppercase">Visuals</h3>
-                                    <span className="text-[8px] text-gold-500 font-bold tracking-widest uppercase bg-gold-500/10 px-2 py-0.5 rounded-full">Local Upload</span>
+                            <section className="space-y-4">
+                                <div className="flex items-center gap-3 mb-6">
+                                    <div className="h-[1px] flex-1 bg-white/5"></div>
+                                    <h3 className="text-[9px] font-black text-neutral-600 tracking-[0.4em] uppercase">Visual Assets</h3>
+                                    <div className="h-[1px] flex-1 bg-white/5"></div>
                                 </div>
-                                <div className="relative group">
-                                    <div className="flex flex-col gap-4 bg-neutral-900/40 backdrop-blur-md border border-neutral-800 rounded-2xl p-6 hover:border-gold-500/30 transition-all duration-300 shadow-xl">
-                                        <div className="flex items-center gap-6">
-                                            <div className="w-20 h-20 bg-neutral-800 rounded-2xl flex items-center justify-center overflow-hidden border-2 border-dashed border-neutral-700 shadow-inner group-hover:border-gold-500/50 transition-colors">
-                                                {templateImages[`${templateType}-${formData.variant}`] ? (
-                                                    <img src={templateImages[`${templateType}-${formData.variant}`]} alt="Preview" className="w-full h-full object-cover" />
-                                                ) : (
-                                                    <div className="flex flex-col items-center gap-1">
-                                                        <User className="w-8 h-8 text-neutral-600" />
-                                                        <span className="text-[8px] text-neutral-600 font-bold uppercase tracking-widest">No Image</span>
-                                                    </div>
-                                                )}
-                                            </div>
-                                            <div className="flex-1">
-                                                <h4 className="text-sm font-bold text-white mb-1">Upload Photo</h4>
-                                                <p className="text-[10px] text-neutral-500 leading-relaxed font-medium">Choose a photo from your computer storage to personalize your card.</p>
-                                            </div>
+                                <div className="bg-neutral-900/20 backdrop-blur-xl border border-white/5 rounded-3xl p-6 group hover:border-amber-500/20 transition-all duration-500 shadow-xl">
+                                    <div className="flex items-center gap-6 mb-6">
+                                        <div className="w-24 h-24 bg-black rounded-2xl flex items-center justify-center overflow-hidden border border-white/10 shadow-inner overflow-hidden">
+                                            {templateImages[`${templateType}-${formData.variant}`] ? (
+                                                <img src={templateImages[`${templateType}-${formData.variant}`]} alt="Preview" className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
+                                            ) : (
+                                                <div className="flex flex-col items-center gap-2 opacity-30 group-hover:opacity-100 transition-opacity">
+                                                    <Camera className="w-8 h-8 text-white" />
+                                                    <span className="text-[8px] font-black uppercase tracking-widest text-white">Choose Photo</span>
+                                                </div>
+                                            )}
                                         </div>
-
-                                        <div className="relative">
-                                            <input
-                                                type="file"
-                                                accept="image/*"
-                                                onChange={handleImageUpload}
-                                                id="file-upload"
-                                                className="hidden"
-                                            />
-                                            <label
-                                                htmlFor="file-upload"
-                                                className="flex items-center justify-center gap-2 w-full py-3 bg-neutral-800 hover:bg-neutral-700 text-white rounded-xl cursor-pointer transition-all duration-200 border border-neutral-700 active:scale-[0.98]"
-                                            >
-                                                <Sparkles className="w-4 h-4 text-gold-500" />
-                                                <span className="text-xs font-bold tracking-widest uppercase">Browse Files</span>
-                                            </label>
+                                        <div className="flex-1">
+                                            <h4 className="text-sm font-bold text-white mb-2 uppercase tracking-widest">Personal Image</h4>
+                                            <p className="text-[10px] text-neutral-500 font-medium leading-relaxed uppercase tracking-wider">High resolution JPG or PNG recommended for professional results.</p>
                                         </div>
                                     </div>
+                                    <input type="file" accept="image/*" onChange={handleImageUpload} id="file-upload" className="hidden" />
+                                    <label htmlFor="file-upload" className="flex items-center justify-center gap-3 w-full py-4 bg-white/5 hover:bg-white/10 text-white rounded-2xl cursor-pointer transition-all duration-300 border border-white/10 active:scale-[0.98] group-hover:border-amber-500/30">
+                                        <Sparkles className="w-4 h-4 text-amber-500" />
+                                        <span className="text-xs font-black tracking-[0.2em] uppercase">Select Asset</span>
+                                    </label>
                                 </div>
                             </section>
                         )}
 
-                        {/* Section: Logistics */}
-                        <section className="space-y-4 animate-fade-in-up" style={{ animationDelay: '500ms' }}>
-                            <h3 className="text-[10px] font-bold text-neutral-600 tracking-[0.3em] uppercase border-b border-neutral-900 pb-2 mb-4">Logistics</h3>
+                        <section className="space-y-4">
+                            <div className="flex items-center gap-3 mb-6">
+                                <div className="h-[1px] flex-1 bg-white/5"></div>
+                                <h3 className="text-[9px] font-black text-neutral-600 tracking-[0.4em] uppercase">Logistics</h3>
+                                <div className="h-[1px] flex-1 bg-white/5"></div>
+                            </div>
                             <div className="grid grid-cols-2 gap-4">
                                 <InputGroup
-                                    delay={550} icon={Calendar} label="Date" name="date"
-                                    value={formData.date} onChange={handleChange} placeholder="Date"
+                                    label="Event Date" name="date" value={formData.date} onChange={handleChange}
+                                    icon={Calendar} placeholder="Date" delay={400}
                                     isFocused={focusedField === 'date'} onFocus={() => handleFocus('date')} onBlur={handleBlur}
                                 />
-
                                 {showTime && (
                                     <InputGroup
-                                        delay={600} icon={Clock} label="Time" name="time"
-                                        value={formData.time} onChange={handleChange} placeholder="Time"
+                                        label="Time" name="time" value={formData.time} onChange={handleChange}
+                                        icon={Clock} placeholder="00:00" delay={500}
                                         isFocused={focusedField === 'time'} onFocus={() => handleFocus('time')} onBlur={handleBlur}
                                     />
                                 )}
@@ -373,16 +412,16 @@ const EventForm = ({ onBack }) => {
 
                             {showLocation && (
                                 <InputGroup
-                                    delay={650} icon={locationIcon} label={locationLabel} name="location"
-                                    value={formData.location} onChange={handleChange} placeholder="Address or Name..."
+                                    label={locationLabel} name="location" value={formData.location} onChange={handleChange}
+                                    icon={locationIcon} placeholder="Venue" delay={600}
                                     isFocused={focusedField === 'location'} onFocus={() => handleFocus('location')} onBlur={handleBlur}
                                 />
                             )}
 
                             {showPhone && (
                                 <InputGroup
-                                    delay={700} icon={Phone} label={phoneLabel} name="phone"
-                                    value={formData.phone} onChange={handleChange} placeholder="Contact info"
+                                    label={phoneLabel} name="phone" value={formData.phone} onChange={handleChange}
+                                    icon={Phone} placeholder="Phone / Email" delay={700}
                                     isFocused={focusedField === 'phone'} onFocus={() => handleFocus('phone')} onBlur={handleBlur}
                                 />
                             )}
@@ -390,63 +429,86 @@ const EventForm = ({ onBack }) => {
                     </div>
                 </div>
 
-                {/* Action Bar */}
-                <div className="sticky bottom-0 left-0 w-full p-6 bg-neutral-950 border-t border-neutral-900 z-[100] shadow-[0_-20px_50px_rgba(0,0,0,0.8)]">
-                    <button
-                        onClick={handleDownload}
-                        className="w-full relative group overflow-hidden rounded-xl bg-gold-500 text-black font-bold py-4 shadow-[0_0_20px_rgba(234,179,8,0.2)] transition-all duration-300 hover:shadow-[0_0_40px_rgba(234,179,8,0.4)] hover:-translate-y-1 active:translate-y-0"
-                    >
-                        <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-out" />
-                        <span className="relative z-10 flex items-center justify-center gap-2 tracking-[0.2em] uppercase text-xs">
-                            <Download className="w-4 h-4" />
-                            Generate & Download PDF
-                        </span>
-                    </button>
-                    <p className="text-center text-neutral-600 text-[8px] font-bold tracking-[0.2em] uppercase mt-4">Premium PaperPop Stationery</p>
+                {/* Fixed Footer Actions */}
+                <div className="sticky bottom-0 left-0 w-full p-8 bg-black/80 backdrop-blur-2xl border-t border-white/10 z-[100] shadow-[0_-30px_60px_rgba(0,0,0,0.8)] flex flex-col gap-4">
+                    <div className="flex gap-4">
+                        <button
+                            onClick={handleSave}
+                            disabled={isSaving}
+                            className="flex-1 rounded-2xl bg-white/5 text-white font-black py-4 transition-all duration-300 hover:bg-white/10 border border-white/10 active:scale-[0.98] disabled:opacity-50"
+                        >
+                            <span className="flex items-center justify-center gap-3 tracking-[0.3em] uppercase text-[10px]">
+                                {isSaving ? <Loader2 className="w-4 h-4 animate-spin text-amber-500" /> : <Save className="w-4 h-4 text-amber-500" />}
+                                Save
+                            </span>
+                        </button>
+                        <button
+                            onClick={handleDownload}
+                            className="flex-[2.5] relative group overflow-hidden rounded-2xl bg-amber-500 text-black font-black py-4 shadow-[0_15px_30px_rgba(234,179,8,0.2)] transition-all duration-500 hover:shadow-[0_20px_40px_rgba(234,179,8,0.4)] hover:-translate-y-1 active:translate-y-0"
+                        >
+                            <div className="absolute inset-0 bg-white/30 translate-y-full group-hover:translate-y-0 transition-transform duration-500 ease-out" />
+                            <span className="relative z-10 flex items-center justify-center gap-3 tracking-[0.3em] uppercase text-[10px]">
+                                <Download className="w-4 h-4" />
+                                Export PDF
+                            </span>
+                        </button>
+                    </div>
+                    <div className="flex items-center justify-center gap-2 opacity-20">
+                        <div className="h-[1px] w-4 bg-white"></div>
+                        <span className="text-[8px] font-black tracking-[0.4em] uppercase">Powered by Imena Studio</span>
+                        <div className="h-[1px] w-4 bg-white"></div>
+                    </div>
                 </div>
             </div>
 
-            {/* RIGHT PANEL: Preview */}
-            <div className="flex-1 relative flex items-center justify-center bg-black overflow-hidden perspective-1000">
+            {/* RIGHT SIDEBAR: PREVIEW STAGE */}
+            <div className="flex-1 relative flex items-center justify-center bg-[#0a0a0a] overflow-hidden">
 
-                {/* Cinematic Backdrop */}
-                <div className="absolute inset-0">
-                    <div className="absolute top-[-20%] left-[-10%] w-[1000px] h-[1000px] bg-gradient-radial from-gold-900/20 to-transparent opacity-50 blur-[100px] animate-pulse"></div>
-                    {/* Floating Dust */}
-                    {Array.from({ length: 30 }).map((_, i) => (
-                        <div
-                            key={i}
-                            className="absolute bg-white/10 rounded-full"
-                            style={{
-                                width: Math.random() * 2 + 'px',
-                                height: Math.random() * 2 + 'px',
-                                top: Math.random() * 100 + '%',
-                                left: Math.random() * 100 + '%',
-                                animation: `float ${Math.random() * 10 + 10}s linear infinite`,
-                                animationDelay: `-${Math.random() * 10}s`
-                            }}
-                        />
-                    ))}
+                {/* Cinematic Environment */}
+                <div className="absolute inset-0 z-0">
+                    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[120%] h-[120%] bg-gradient-radial from-amber-500/5 via-transparent to-transparent opacity-50 blur-[150px]"></div>
+                    {/* Perspective lines */}
+                    <div className="absolute inset-0 opacity-[0.03] bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')]"></div>
                 </div>
 
-                {/* 3D Card Stage */}
-                <div className="relative z-10 transition-transform duration-700 ease-out transform hover:scale-[1.02] hover:rotate-y-2 hover:rotate-x-2">
-
-                    {/* Spotlight on Card */}
-                    <div className="absolute inset-0 bg-gold-400/5 blur-3xl rounded-full transform scale-150"></div>
-
-                    <div className="relative shadow-[0_50px_100px_-20px_rgba(0,0,0,0.8)] rounded-sm border-[0.5px] border-white/10 ring-1 ring-black/50">
-                        <InvitationPreview
-                            ref={previewRef}
-                            data={{ ...formData, image: templateImages[`${templateType}-${formData.variant}`] }}
-                            templateType={templateType}
-                        />
+                <div className="relative z-10 flex flex-col items-center">
+                    {/* Label/Status */}
+                    <div className="mb-12 flex flex-col items-center gap-4 animate-fade-in">
+                        <span className="text-[10px] font-black text-white/30 tracking-[0.6em] uppercase">Interactive Preview</span>
+                        <div className="h-20 w-[1px] bg-gradient-to-b from-transparent via-amber-500/50 to-transparent"></div>
                     </div>
 
-                    {/* Glass Reflection */}
-                    <div className="absolute inset-0 bg-gradient-to-tr from-white/10 via-transparent to-transparent opacity-50 pointer-events-none mix-blend-overlay rounded-sm"></div>
+                    {/* The Masterpiece Stage */}
+                    <div className="relative group transition-all duration-1000 ease-[cubic-bezier(0.23,1,0.32,1)] transform hover:scale-[1.03] hover:rotate-y-1 hover:rotate-x-1">
+                        {/* Shadow Diffusion */}
+                        <div className="absolute -inset-10 bg-black/60 blur-[60px] rounded-full opacity-60 group-hover:opacity-80 transition-opacity"></div>
+
+                        {/* Frame and Content */}
+                        <div className="relative shadow-[0_80px_150px_-30px_rgba(0,0,0,0.9)] rounded-[5px] ring-[0.5px] ring-white/20 overflow-hidden transform-gpu">
+                            <InvitationPreview
+                                ref={previewRef}
+                                data={{ ...formData, image: templateImages[`${templateType}-${formData.variant}`] }}
+                                templateType={templateType}
+                            />
+                            {/* Surface Reflection */}
+                            <div className="absolute inset-0 bg-gradient-to-tr from-white/10 via-transparent to-transparent opacity-30 pointer-events-none mix-blend-overlay"></div>
+                        </div>
+
+                        {/* Visual Quality Indicator */}
+                        <div className="absolute -bottom-12 left-1/2 -translate-x-1/2 flex items-center gap-4 opacity-0 group-hover:opacity-100 transition-all duration-700 translate-y-4 group-hover:translate-y-0">
+                            <div className="flex items-center gap-2 px-4 py-2 bg-black/80 backdrop-blur-xl border border-white/10 rounded-full">
+                                <Sparkles className="w-3 h-3 text-amber-500" />
+                                <span className="text-[9px] font-black text-white uppercase tracking-widest whitespace-nowrap">Premium Print Quality</span>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
+                {/* Navigation Hint */}
+                <div className="absolute bottom-10 right-10 flex items-center gap-4 animate-fade-in animation-delay-700">
+                    <span className="text-[10px] font-bold text-neutral-600 uppercase tracking-widest">Scroll to Design</span>
+                    <div className="w-8 h-[1px] bg-neutral-800"></div>
+                </div>
             </div>
         </div>
     );
