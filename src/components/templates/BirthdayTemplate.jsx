@@ -32,10 +32,10 @@ const BirthdayTemplate = ({ data }) => {
                         <span className="text-[9px] font-black tracking-[0.4em] text-brand-gold uppercase">You are invited to the</span>
                     </div>
 
-                    <h1 className="text-8xl font-cursive text-brand-gold mb-6 leading-tight drop-shadow-[0_4px_10px_rgba(0,0,0,0.5)]" style={{ fontFamily: "'Great Vibes', cursive" }}>
+                    <h1 className="text-8xl font-cursive text-brand-gold mb-12 leading-tight drop-shadow-[0_4px_10px_rgba(0,0,0,0.5)]" style={{ fontFamily: "'Great Vibes', cursive" }}>
                         {subtitle || "Birthday"}
                     </h1>
-                    <h2 className="text-4xl font-black tracking-[0.6em] text-brand-gold uppercase mb-10 drop-shadow-lg">
+                    <h2 className="text-4xl font-black tracking-[0.3em] text-brand-gold uppercase mb-12 drop-shadow-lg">
                         {title || 'PARTY'}
                     </h2>
 
@@ -127,7 +127,7 @@ const BirthdayTemplate = ({ data }) => {
                 <div className="absolute inset-[15%] bg-black/90 z-0 shadow-[0_0_80px_60px_rgba(0,0,0,0.9)]"></div>
 
                 <div className="relative z-10 h-full flex flex-col items-center justify-center text-center p-14">
-                    <h2 className="text-brand-blue font-black tracking-[0.5em] uppercase text-[10px] mb-4 opacity-80">
+                    <h2 className="text-brand-blue font-black tracking-[0.25em] uppercase text-[10px] mb-4 opacity-80">
                         {title || "HAPPY"}
                     </h2>
                     <h1 className="text-8xl font-serif italic text-white leading-none mb-8 drop-shadow-2xl" style={{ fontFamily: "'Playfair Display', serif" }}>

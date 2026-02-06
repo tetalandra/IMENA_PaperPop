@@ -3,7 +3,7 @@ import brandLogo from '@/assets/brand-logo.png';
 import rememberingLogo from '@/assets/remembering-logo.png';
 
 const RememberingTemplate = ({ data }) => {
-    const { title, subtitle, date, image, message, variant = 20, location, time, phone, backgroundType, backgroundImage } = data;
+    const { title, subtitle, date, image, message, variant = 20, location, time, phone, backgroundType, backgroundImage, logo } = data;
 
     const backgroundStyle = backgroundType === 'image' && backgroundImage ? {
         backgroundImage: `url(${backgroundImage.src || backgroundImage})`,
@@ -45,7 +45,7 @@ const RememberingTemplate = ({ data }) => {
 
                 <div className="relative z-10 flex flex-col items-center justify-center h-full px-16 text-center">
                     <div className="mb-10 bg-white/60 backdrop-blur-sm px-8 py-2 rounded-full border border-neutral-600/20">
-                        <span className="text-[9px] font-black tracking-[0.5em] uppercase text-neutral-500">In Loving Memory</span>
+                        <span className="text-[9px] font-black tracking-[0.5em] uppercase text-neutral-500">remember -unite-renew</span>
                     </div>
 
                     <h1 className="text-6xl font-serif mb-4 tracking-tight leading-tight" style={{ fontFamily: "'Playfair Display', serif", color: '#374151' }}>
@@ -82,55 +82,56 @@ const RememberingTemplate = ({ data }) => {
         );
     }
 
-    // Variant 21: Candle Light (Somber Dark with Warm Amber Glow)
+    // Variant 21: Kwibuka (Dignified Remembrance)
     if (variant === 21) {
         return (
-            <div className="relative w-full h-full bg-gradient-to-b from-neutral-900 via-black to-neutral-950 text-white overflow-hidden font-sans" style={backgroundStyle}>
-                <RememberingLogo />
+            <div className="relative w-full h-full bg-black text-white overflow-hidden font-sans" style={backgroundStyle}>
                 <ImenaBranding />
 
-                {/* Soft Candle Glow - Amber Light */}
-                <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-96 h-96 bg-amber-600/20 blur-[150px] rounded-full z-0"></div>
-                <div className="absolute top-1/3 left-1/4 w-48 h-48 bg-amber-500/10 blur-[80px] rounded-full z-0"></div>
-                <div className="absolute top-1/2 right-1/4 w-48 h-48 bg-amber-500/10 blur-[80px] rounded-full z-0"></div>
-
-                {/* Smoke Wisps Effect */}
-                <div className="absolute top-0 left-1/2 -translate-x-1/2 w-64 h-64 bg-gradient-to-b from-neutral-600/10 to-transparent blur-3xl"></div>
-
-                {/* Dignified Frame */}
-                <div className="absolute inset-8 border border-amber-900/30 rounded-sm pointer-events-none"></div>
+                {/* Cinematic Depth Overlays */}
+                <div className="absolute inset-x-0 top-0 h-64 bg-gradient-to-b from-black/80 to-transparent z-10 opacity-70"></div>
+                <div className="absolute inset-0 bg-black/30 backdrop-blur-[0.5px] z-0"></div>
 
                 <div className="relative z-20 flex flex-col items-center justify-center h-full px-14 text-center">
-                    <div className="mb-10 bg-black/40 backdrop-blur-sm px-8 py-2 rounded-full border border-amber-900/20">
-                        <span className="text-[10px] font-black tracking-[0.6em] uppercase text-amber-600/80">Honoring the Life of</span>
+                    {/* Kwibuka Logo - Top Center */}
+                    <div className="mb-12 transform-gpu transition-transform duration-1000 hover:scale-105">
+                        {logo ? (
+                            <img src={logo.src || logo} alt="Kwibuka" className="h-32 w-auto drop-shadow-[0_0_30px_rgba(255,255,255,0.2)]" />
+                        ) : (
+                            <div className="h-32 w-32 bg-white/5 rounded-full blur-xl animate-pulse"></div>
+                        )}
                     </div>
 
-                    <h1 className="text-5xl font-serif text-white tracking-widest leading-none mb-4 uppercase" style={{ fontFamily: "'Playfair Display', serif", textShadow: '0 0 20px rgba(217, 119, 6, 0.3)' }}>
-                        {title || "NAME HERE"}
-                    </h1>
+                    <div className="max-w-2xl flex flex-col items-center">
+                        <h1 className="text-6xl font-black text-white tracking-widest leading-none mb-4 uppercase drop-shadow-2xl"
+                            style={{ fontFamily: "'Playfair Display', serif" }}>
+                            {title || "KWIBUKA 31"}
+                        </h1>
 
-                    <div className="w-32 h-[1px] bg-gradient-to-r from-transparent via-amber-700/40 to-transparent mb-6"></div>
+                        <div className="w-48 h-[1px] bg-white/20 mb-8 mt-2"></div>
 
-                    <p className="text-sm font-semibold tracking-[0.4em] text-neutral-400 mb-12">
-                        {subtitle || "DATES HERE"}
-                    </p>
-
-                    {/* Quote Card */}
-                    <div className="max-w-md bg-black/60 backdrop-blur-md border border-amber-900/30 rounded-2xl p-6 mb-12 shadow-2xl">
-                        <p className="text-xs text-neutral-300 leading-relaxed italic">
-                            {message || "A life so beautiful deserves a special celebration. Please join us in remembering a wonderful soul."}
+                        <p className="text-lg font-bold tracking-[0.5em] text-neutral-300 mb-12 uppercase">
+                            {subtitle || "REMEMBER-UNITE-RENEW"}
                         </p>
-                    </div>
 
-                    <div className="space-y-3 border-t border-amber-900/20 pt-6 w-full max-w-xs">
-                        <div className="flex justify-between items-center">
-                            <span className="text-[9px] font-black tracking-[0.3em] uppercase text-amber-700/80">Date</span>
-                            <span className="text-sm font-semibold text-amber-100/90">{date || "TBA"}</span>
+                        {/* Personal Message / Writing Words */}
+                        <div className="max-w-md bg-black/40 backdrop-blur-md border border-white/5 rounded-3xl p-10 shadow-[0_50px_100px_-20px_rgba(0,0,0,0.5)]">
+                            <p className="text-sm text-neutral-200 leading-relaxed font-medium uppercase tracking-[0.1em]">
+                                {message || "A time to remember our loved ones, unite as a nation, and renew our commitment to a peaceful future."}
+                            </p>
                         </div>
-                        {location && (
-                            <div className="flex justify-between items-center">
-                                <span className="text-[9px] font-black tracking-[0.3em] uppercase text-amber-700/80">Venue</span>
-                                <span className="text-sm font-semibold text-amber-100/90">{location}</span>
+
+                        {(date || location) && (
+                            <div className="mt-14 flex items-center gap-12 text-[10px] font-black uppercase tracking-[0.4em] text-white/40">
+                                <div className="flex flex-col items-center gap-2">
+                                    <span className="text-white/60">Date</span>
+                                    <span className="text-white">{date || "7TH APRIL 2025"}</span>
+                                </div>
+                                <div className="w-[1px] h-8 bg-white/10"></div>
+                                <div className="flex flex-col items-center gap-2">
+                                    <span className="text-white/60">Venue</span>
+                                    <span className="text-white">{location || "KIGALI MEMORIAL"}</span>
+                                </div>
                             </div>
                         )}
                     </div>

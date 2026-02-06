@@ -81,47 +81,46 @@ const AchievementTemplate = ({ data }) => {
         );
     }
 
-    // Variant 31: Graduation Thank You (Theatrical Gold)
+    // Variant 31: Graduation Thank You (Custom Background 21.jpg)
     if (variant === 31) {
         return (
-            <div className="relative w-full h-full bg-[#050505] text-white overflow-hidden font-sans flex flex-col items-center" style={backgroundStyle}>
+            <div className="relative w-full h-full bg-black text-white overflow-hidden font-sans flex flex-col items-center" style={backgroundStyle}>
                 <ImenaBranding />
-                {/* Curtain Effect */}
-                <div className="absolute inset-y-0 left-0 w-16 bg-gradient-to-r from-black via-neutral-900 to-transparent opacity-80 z-10 shadow-2xl"></div>
-                <div className="absolute inset-y-0 right-0 w-16 bg-gradient-to-l from-black via-neutral-900 to-transparent opacity-80 z-10 shadow-2xl"></div>
 
-                {/* Gold Glitter/Ribbons */}
-                <div className="absolute inset-0 opacity-30 z-0 bg-[url('https://www.transparenttextures.com/patterns/dust.png')] pointer-events-none"></div>
+                {/* Cinematic Overlays */}
+                <div className="absolute inset-0 bg-black/30 backdrop-blur-[0.5px] z-0"></div>
+                <div className="absolute inset-x-0 bottom-0 h-64 bg-gradient-to-t from-black/80 to-transparent z-0"></div>
 
-                <div className="relative z-20 flex flex-col items-center justify-center h-full px-16 text-center">
-                    <div className="mb-8">
-                        <span className="text-[11px] font-black tracking-[0.6em] text-brand-gold uppercase">{date || "CLASS OF 2026"}</span>
+                <div className="relative z-20 flex flex-col items-center justify-center h-full px-12 text-center">
+                    <div className="mb-10 group">
+                        <div className="w-16 h-[1px] bg-brand-gold/40 mx-auto mb-4"></div>
+                        <span className="text-[11px] font-black tracking-[0.6em] text-brand-gold uppercase drop-shadow-lg">
+                            {date || "CLASS OF 2026"}
+                        </span>
                     </div>
 
-                    {/* Graduation Cap SVG Shape (Simplified) */}
-                    <div className="mb-8 relative">
-                        <div className="w-24 h-6 bg-brand-gold rounded-t-sm shadow-2xl relative z-10"></div>
-                        <div className="absolute -top-6 left-1/2 -translate-x-1/2 w-48 h-12 bg-neutral-900 rotate-[10deg] border border-brand-gold/30"></div>
-                        <div className="absolute top-4 right-2 w-1 h-20 bg-brand-gold/60 origin-top rotate-12"></div>
+                    <h1 className="text-7xl font-black text-white leading-none mb-4 uppercase drop-shadow-2xl italic tracking-tighter"
+                        style={{ fontFamily: "'Playfair Display', serif" }}>
+                        {title || "GRADUATION"}
+                    </h1>
+
+                    <div className="w-32 h-[1px] bg-white/20 mb-12"></div>
+
+                    <div className="max-w-md bg-black/40 backdrop-blur-md border border-white/5 rounded-3xl p-10 shadow-2xl mb-14">
+                        <p className="text-sm font-medium leading-relaxed text-gray-200 uppercase tracking-widest italic">
+                            {message || "Thank you for all your support and being part of this special milestone in my journey."}
+                        </p>
                     </div>
 
-                    <div className="flex flex-col gap-2 mb-12">
-                        <h1 className="text-6xl font-black text-brand-gold tracking-[0.1em] leading-none">THANK</h1>
-                        <h1 className="text-6xl font-black text-brand-gold tracking-[0.1em] leading-none">YOU</h1>
-                    </div>
-
-                    <div className="max-w-[300px] text-gray-300 text-xs leading-relaxed mb-14 px-4 uppercase tracking-[0.15em] font-medium">
-                        {message || "FOR ATTENDING MY GRADUATION PARTY. IT MEANT SO MUCH TO ME. I APPRECIATE YOUR THOUGHTFUL GIFT."}
-                    </div>
-
-                    <div className="space-y-1">
-                        <div className="text-[10px] italic text-neutral-500 lowercase">with love,</div>
-                        <div className="text-xl font-black tracking-[0.3em] text-brand-gold uppercase">{subtitle || "JORDAN JONSON"}</div>
+                    <div className="space-y-2">
+                        <div className="text-[10px] font-bold text-brand-gold/60 uppercase tracking-[0.4em]">With Gratitude,</div>
+                        <div className="text-2xl font-black tracking-[0.2em] text-white uppercase">{subtitle || "JORDAN JONSON"}</div>
                     </div>
                 </div>
 
                 {/* Light Beams */}
-                <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[600px] bg-brand-gold/5 rounded-full blur-[120px] -translate-y-1/2 z-0"></div>
+                <div className="absolute top-0 left-1/4 w-[400px] h-[400px] bg-brand-gold/5 rounded-full blur-[100px] -translate-y-1/2 z-0"></div>
+                <div className="absolute bottom-0 right-1/4 w-[400px] h-[400px] bg-brand-gold/5 rounded-full blur-[100px] translate-y-1/2 z-0"></div>
             </div>
         );
     }
