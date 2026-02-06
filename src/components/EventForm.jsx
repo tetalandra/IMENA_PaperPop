@@ -20,6 +20,12 @@ import noticeV7 from '../assets/templates/notice_variant_7.jpg';
 import assemblyTuesday from '../assets/templates/17.jpg';
 import awardBg from '../assets/templates/18.jpg';
 import assemblySaturday from '../assets/templates/19.jpg';
+import kwibukaBg from '../assets/templates/kwibuka.jpg';
+import kwibukaLogo from '../assets/kwibuka.png';
+import valentineV10 from '../assets/templates/valentine_v10.jpg';
+import valentineV11 from '../assets/templates/valentine_v11.jpg';
+import noticeV20 from '../assets/templates/20.jpg';
+import awardGraduation from '../assets/templates/21.jpg';
 const InputGroup = ({
     label, name, value, onChange, type = "text", icon: Icon, placeholder, multiline = false,
     delay, isFocused, onFocus, onBlur, className, required = false
@@ -118,22 +124,22 @@ const EventForm = ({ onBack }) => {
         'birthday-6': { ...initialFormState, title: 'Modern One', variant: 6, backgroundType: 'image', backgroundImage: birthdayV6.src || birthdayV6 },
         'birthday-7': { ...initialFormState, title: 'Balloon Day', variant: 7, backgroundType: 'image', backgroundImage: birthdayV7.src || birthdayV7 },
         // Announcements
-        'announcement-5': { ...initialFormState, title: 'Annual Gala', variant: 5, backgroundType: 'image', backgroundImage: noticeV5.src || noticeV5 },
-        'announcement-6': { ...initialFormState, title: 'Luxury Event', variant: 6, backgroundType: 'image', backgroundImage: noticeV6.src || noticeV6 },
-        'announcement-7': { ...initialFormState, title: 'Grand Opening', variant: 7, backgroundType: 'image', backgroundImage: noticeV7.src || noticeV7 },
+        'announcement-5': { ...initialFormState, title: 'Annual Gala', subtitle: 'Global Solutions', variant: 5, backgroundType: 'image', backgroundImage: noticeV5.src || noticeV5 },
+        'announcement-6': { ...initialFormState, title: 'Luxury Event', variant: 6, backgroundType: 'image', backgroundImage: noticeV20.src || noticeV20 },
+        'announcement-7': { ...initialFormState, title: 'Grand Opening', subtitle: "Ray's Bistro", variant: 7, backgroundType: 'image', backgroundImage: noticeV7.src || noticeV7 },
         // Achievement
         'achievement-0': { ...initialFormState, title: 'Certificate of Excellence', variant: 0, backgroundType: 'image', backgroundImage: awardBg.src || awardBg },
         'achievement-30': { ...initialFormState, title: 'SOFTWARE ENGINEER', subtitle: 'David Lee', location: 'COMPANY NAME', variant: 30, backgroundType: 'color' },
-        'achievement-31': { ...initialFormState, subtitle: 'JORDAN JONSON', date: 'CLASS OF 2026', variant: 31, backgroundType: 'color' },
+        'achievement-31': { ...initialFormState, title: 'Class of 2026', subtitle: 'Jordan Jonson', variant: 31, backgroundType: 'image', backgroundImage: awardGraduation.src || awardGraduation },
         // Assembly
         'assembly-3': { ...initialFormState, title: 'Weekly Assembly', variant: 3, backgroundType: 'image', backgroundImage: assemblyTuesday.src || assemblyTuesday },
         'assembly-4': { ...initialFormState, variant: 4, backgroundType: 'image', backgroundImage: assemblySaturday.src || assemblySaturday },
         // Valentine
-        'valentine-10': { ...initialFormState, title: "Valentine's Dinner", subtitle: 'Deep Velvet Romance', variant: 10 },
-        'valentine-11': { ...initialFormState, title: "Be Mine", subtitle: 'Soft Peony Lace', variant: 11 },
+        'valentine-10': { ...initialFormState, title: "", subtitle: '', variant: 10, backgroundType: 'image', backgroundImage: valentineV10.src || valentineV10 },
+        'valentine-11': { ...initialFormState, title: "", subtitle: '', variant: 11, backgroundType: 'image', backgroundImage: valentineV11.src || valentineV11 },
         // Remembering
         'remembering-20': { ...initialFormState, title: "In Memory", subtitle: 'Peaceful Lily', variant: 20 },
-        'remembering-21': { ...initialFormState, title: "A Life Honored", subtitle: 'Candle Light', variant: 21 },
+        'remembering-21': { ...initialFormState, title: "Kwibuka 31", subtitle: 'Remember-Unite-Renew', variant: 21, backgroundType: 'image', backgroundImage: kwibukaBg.src || kwibukaBg, logo: kwibukaLogo },
     });
 
     const [currentVariant, setCurrentVariant] = useState(5); // Shared across types but used as key
@@ -251,10 +257,10 @@ const EventForm = ({ onBack }) => {
         { id: 'b6', label: 'Modern Photo', img: birthdayV6.src || birthdayV6, variant: 6, category: 'birthday' },
         { id: 'b7', label: 'Balloon Party', img: birthdayV7.src || birthdayV7, variant: 7, category: 'birthday' },
         { id: 'n5', label: 'Annual Gala', img: noticeV5.src || noticeV5, variant: 5, category: 'announcement' },
-        { id: 'n6', label: 'Luxury Event', img: noticeV6.src || noticeV6, variant: 6, category: 'announcement' },
+        { id: 'n6', label: 'Luxury Event', img: noticeV20.src || noticeV20, variant: 6, category: 'announcement' },
         { id: 'n7', label: 'Grand Opening', img: noticeV7.src || noticeV7, variant: 7, category: 'announcement' },
-        { id: 'v10', label: 'Velvet Romance', img: null, variant: 10, category: 'valentine' },
-        { id: 'v11', label: 'Peony Lace', img: null, variant: 11, category: 'valentine' },
+        { id: 'v10', label: 'Velvet Romance', img: valentineV10.src || valentineV10, variant: 10, category: 'valentine' },
+        { id: 'v11', label: 'Peony Lace', img: valentineV11.src || valentineV11, variant: 11, category: 'valentine' },
         { id: 'r20', label: 'Peaceful Lily', img: null, variant: 20, category: 'remembering' },
         { id: 'r21', label: 'Candle Light', img: null, variant: 21, category: 'remembering' },
         { id: 'a30', label: 'Employee of Month', img: null, variant: 30, category: 'achievement' },
@@ -275,6 +281,8 @@ const EventForm = ({ onBack }) => {
             showImage: false,
             requiredFields: ['title', 'date', 'location'],
             messagePlaceholder: 'Write a warm invitation message...',
+            showMessage: true,
+            showDate: true,
         };
 
         switch (templateType) {
@@ -296,9 +304,18 @@ const EventForm = ({ onBack }) => {
                 config.requiredFields = ['title', 'date', 'location'];
                 config.variants = [
                     { id: 5, name: 'Annual Gala', preview: <Calendar className="w-5 h-5" />, img: noticeV5.src || noticeV5 },
-                    { id: 6, name: 'Luxury Event', preview: <Crown className="w-5 h-5" />, img: noticeV6.src || noticeV6 },
+                    { id: 6, name: 'Luxury Event', preview: <Crown className="w-5 h-5" />, img: noticeV20.src || noticeV20 },
                     { id: 7, name: 'Grand Opening', preview: <Scissors className="w-5 h-5" />, img: noticeV7.src || noticeV7 }
                 ];
+
+                // Variant Specific Adjustments
+                if (currentVariant === 6) {
+                    config.showTime = false;
+                    config.showPhone = false;
+                }
+                if (currentVariant === 7) {
+                    config.showMessage = false;
+                }
                 break;
             case 'achievement':
                 config.showTime = false;
@@ -324,7 +341,7 @@ const EventForm = ({ onBack }) => {
                 config.variants = [
                     { id: 0, name: 'Premium Certificate', preview: <AwardIcon className="w-5 h-5" />, img: awardBg.src || awardBg },
                     { id: 30, name: 'Employee Month', preview: <Trophy className="w-5 h-5" /> },
-                    { id: 31, name: 'Graduation', preview: <GraduationCap className="w-5 h-5" /> }
+                    { id: 31, name: 'Graduation', preview: <GraduationCap className="w-5 h-5" />, img: awardGraduation.src || awardGraduation }
                 ];
                 break;
             case 'assembly':
@@ -337,14 +354,17 @@ const EventForm = ({ onBack }) => {
                 ];
                 break;
             case 'valentine':
-                config.titleLabel = 'Title';
+                config.showTime = false;
+                config.showLocation = false;
+                config.showPhone = false;
+                config.dateLabel = 'Valentine Date';
+                config.titleLabel = 'Romantic Title';
                 config.subtitleLabel = 'Couple Names / Subtitle';
-                config.locationLabel = 'Venue';
-                config.requiredFields = ['title', 'date', 'location'];
-                config.messagePlaceholder = 'Wishing you a very romantic day...';
+                config.requiredFields = ['title']; // simplified
+                config.showMessage = false; // Custom flag to hide message field
                 config.variants = [
-                    { id: 10, name: 'Velvet Romance', preview: <Heart className="w-5 h-5" /> },
-                    { id: 11, name: 'Peony Lace', preview: <Flower2 className="w-5 h-5" /> }
+                    { id: 10, name: 'Velvet Romance', preview: <Heart className="w-5 h-5" />, img: valentineV10.src || valentineV10 },
+                    { id: 11, name: 'Peony Lace', preview: <Heart className="w-5 h-5" />, img: valentineV11.src || valentineV11 }
                 ];
                 break;
             case 'remembering':
@@ -356,8 +376,17 @@ const EventForm = ({ onBack }) => {
                 config.messagePlaceholder = 'A tribute to a life well lived...';
                 config.variants = [
                     { id: 20, name: 'Peaceful Lily', preview: <Feather className="w-5 h-5" /> },
-                    { id: 21, name: 'Candle Light', preview: <Flame className="w-5 h-5" /> }
+                    { id: 21, name: 'Kwibuka', preview: <Flame className="w-5 h-5" />, img: kwibukaBg.src || kwibukaBg, logo: kwibukaLogo }
                 ];
+
+                if (currentVariant === 21) {
+                    config.showDate = false;
+                    config.showTime = false;
+                    config.showLocation = false;
+                    config.showPhone = false;
+                    config.titleLabel = 'Title';
+                    config.subtitleLabel = 'Subtitle / Motto';
+                }
                 break;
         }
         return config;
@@ -365,7 +394,7 @@ const EventForm = ({ onBack }) => {
 
     const {
         showTime, showLocation, locationLabel, locationIcon, titleLabel, subtitleLabel, dateLabel,
-        showPhone, phoneLabel, showImage, variants, requiredFields, messagePlaceholder
+        showPhone, phoneLabel, showImage, variants, requiredFields, messagePlaceholder, showMessage, showDate
     } = getFieldConfig();
 
     return (
@@ -562,12 +591,14 @@ const EventForm = ({ onBack }) => {
                                 />
                             </div>
 
-                            <InputGroup
-                                label="Invitation Message" name="message" value={activeData.message} onChange={handleChange}
-                                icon={AlignLeft} placeholder={messagePlaceholder} multiline delay={300}
-                                isFocused={focusedField === 'message'} onFocus={() => handleFocus('message')} onBlur={handleBlur}
-                                required={requiredFields.includes('message')}
-                            />
+                            {showMessage !== false && (
+                                <InputGroup
+                                    label="Invitation Message" name="message" value={activeData.message} onChange={handleChange}
+                                    icon={AlignLeft} placeholder={messagePlaceholder} multiline delay={300}
+                                    isFocused={focusedField === 'message'} onFocus={() => handleFocus('message')} onBlur={handleBlur}
+                                    required={requiredFields.includes('message')}
+                                />
+                            )}
                         </section>
 
                         {showImage && (
@@ -610,12 +641,14 @@ const EventForm = ({ onBack }) => {
                                 <div className="h-[1px] flex-1 bg-foreground/5"></div>
                             </div>
                             <div className="grid grid-cols-2 gap-4">
-                                <InputGroup
-                                    label={dateLabel} name="date" value={activeData.date} onChange={handleChange}
-                                    icon={Calendar} placeholder="Date" delay={400}
-                                    isFocused={focusedField === 'date'} onFocus={() => handleFocus('date')} onBlur={handleBlur}
-                                    required={requiredFields.includes('date')}
-                                />
+                                {showDate !== false && (
+                                    <InputGroup
+                                        label={dateLabel} name="date" value={activeData.date} onChange={handleChange}
+                                        icon={Calendar} placeholder="Date" delay={400}
+                                        isFocused={focusedField === 'date'} onFocus={() => handleFocus('date')} onBlur={handleBlur}
+                                        required={requiredFields.includes('date')}
+                                    />
+                                )}
                                 {showTime && (
                                     <InputGroup
                                         label="Time" name="time" value={activeData.time} onChange={handleChange}

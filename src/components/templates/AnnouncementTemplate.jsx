@@ -53,33 +53,42 @@ const AnnouncementTemplate = ({ data }) => {
         );
     }
 
-    // Variant 6: Luxury Event
+    // Variant 6: Luxury Event (Custom Background 20.jpg)
     if (variant === 6) {
         return (
             <div className="relative w-full h-full bg-black text-white overflow-hidden font-sans" style={backgroundStyle}>
                 <ImenaBranding />
 
-                {/* OPAQUE MASK: Clears the central invitation text block */}
-                <div className="absolute top-[35%] bottom-[10%] left-[25%] right-[25%] bg-black z-0"></div>
+                {/* Cinematic Overlays: Subtle darkened center for text legibility */}
+                <div className="absolute inset-0 bg-black/40 backdrop-blur-[0.5px] z-0"></div>
+                <div className="absolute inset-x-0 top-0 h-48 bg-gradient-to-b from-black/60 to-transparent z-0"></div>
 
                 <div className="relative z-10 flex flex-col items-center justify-center h-full px-14 text-center">
-                    <div className="mt-20 mb-8 w-32 h-[1px] bg-white/20"></div>
-                    <h2 className="text-white uppercase tracking-[0.6em] text-base font-black mb-6 drop-shadow-lg">
-                        {title?.toUpperCase() || "LUXURY EVENT"}
+                    <div className="mb-8 w-16 h-[1px] bg-white/20"></div>
+
+                    <h2 className="text-white uppercase tracking-[0.6em] text-[10px] font-black mb-4 drop-shadow-lg">
+                        {subtitle || "Exclusively Yours"}
                     </h2>
-                    <h1 className="text-6xl font-cursive mb-12 text-white drop-shadow-xl" style={{ fontFamily: "'Great Vibes', cursive" }}>
-                        Invitation
+
+                    <h1 className="text-6xl font-black text-white leading-none mb-10 uppercase drop-shadow-2xl"
+                        style={{ fontFamily: "'Playfair Display', serif" }}>
+                        {title || "LUXURY EVENT"}
                     </h1>
 
-                    <div className="w-full max-w-xs border-t border-white/10 pt-10">
-                        <p className="text-white/60 font-medium text-[11px] leading-relaxed uppercase tracking-[0.2em] italic">
-                            {message || "We request the pleasure of your company."}
+                    <div className="w-full max-w-sm border-t border-white/10 pt-10">
+                        <p className="text-white font-medium text-[13px] leading-relaxed uppercase tracking-[0.2em] mb-12">
+                            {message || "We request the pleasure of your company for an unforgettable evening of elegance."}
                         </p>
                     </div>
 
-                    <div className="mt-16 py-2 px-6 border border-white/10 bg-black shadow-2xl">
-                        <div className="text-[10px] tracking-[0.6em] font-bold text-white/70 uppercase">
-                            {date || "RSVP REQUIRED"}
+                    <div className="grid grid-cols-2 gap-12 w-full max-w-xs border-y border-white/5 py-8">
+                        <div className="text-center group">
+                            <span className="block text-[8px] text-white/40 mb-1 font-black uppercase tracking-[0.3em] group-hover:text-white/60 transition-colors">Date</span>
+                            <span className="text-xs font-bold tracking-widest">{date || "TBA"}</span>
+                        </div>
+                        <div className="text-center group">
+                            <span className="block text-[8px] text-white/40 mb-1 font-black uppercase tracking-[0.3em] group-hover:text-white/60 transition-colors">Venue</span>
+                            <span className="text-xs font-bold tracking-widest truncate block w-32">{location || "GRAND PLAZA"}</span>
                         </div>
                     </div>
                 </div>
